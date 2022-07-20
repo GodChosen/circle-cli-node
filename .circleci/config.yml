@@ -1,31 +1,32 @@
+defaults: &dockerenvironment
+
 version: 2.1
+
 orbs:
   snyk: snyk/snyk@0.0.11
+
 jobs:
   run_tests:
-    docker:
-      - image: circleci/node:12
+    <<: *dockerenvironment
     steps:
       - checkout
       - run:
           name: Install npm dependencies
           command: |
-            sudo npm install -g
+            sudo npm i -g
       - run:
           name: Run Unit Tests
           command: |
-            ./node_modules/mocha/bin/mocha test/ --reporter mochawesome --reporter-options reportDir=test-results,reportFilename=test-results
+            ./node_modules/mocha/bin/mocha test/ --reporter mochawesome --reporter-options reportDir=test-results, reportFilename=test-results
   vulnerability_scan:
-    docker:
-      - image: circleci/node:12
+    <<: *dockerenvironment
     steps:
       - checkout
       - run:
           name: Install npm dependencies
           command: |
-            sudo npm install -g
-      - snyk/scan:
-          fail-on-issues: false
+            sudo npm i -g
+      - snyk/scan
 workflows:
   build_test:
     jobs:
